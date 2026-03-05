@@ -18,7 +18,7 @@ def main():
     # 2. Filter for only the brand new ones
     new_jobs_to_notify = []
     for job in all_jobs:
-        if is_new_job(job['url']):
+     if True:  # Temporary change to force send everything:
             save_job(job['url'], job['title'], job['company'])
             new_jobs_to_notify.append(job)
     
@@ -33,3 +33,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
