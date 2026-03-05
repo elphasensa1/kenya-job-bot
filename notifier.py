@@ -5,22 +5,24 @@ def send_telegram_summary(jobs):
     token = os.getenv("TELEGRAM_BOT_TOKEN")
     chat_id = os.getenv("TELEGRAM_CHAT_ID")
     
-    if not token or not chat_id:
-        print("❌ ERROR: Secrets are missing in GitHub Settings!")
+    if not token or not chat_id or not jobs:
         return
 
-    message = "🇰🇪 *Bot Test Message*\n\nIf you see this, the connection is live!"
+    # Build a nice header
+    message = "🇰🇪 *New Job Opportunities Found*\n"
+    message += "--------------------------\n\n"
+    
+    for i, job in enumerate(jobs, 1):
+        # Format: 1. Job Title
+        #         🏢 Company Name
+        message += f"{i}. *{job['title']}*\n🏢 {job['company']}\n🔗 [View Job & Apply]({job['url']})\n\n"
     
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     payload = {
         "chat_id": chat_id,
         "text": message,
-        "parse_mode": "Markdown"
+        "parse_mode": "Markdown",
+        "disable_web_page_preview": True
     }
     
-    try:
-        response = requests.post(url, data=payload)
-        # THIS LINE IS THE KEY: It will tell us why it's failing
-        print(f"📡 Telegram Response: Status {response.status_code}, Content: {response.text}")
-    except Exception as e:
-        print(f"❌ Connection Error: {e}")
+    requests.post(url, data=payload)
